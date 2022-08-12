@@ -1,0 +1,43 @@
+****************************************************************
+-- CREATE TABLE sample 
+-- Create and refresh
+CREATE TABLE Instructor (
+	Instructor_Name CHAR(100) PRIMARY KEY,
+	Instructor_Affiliation CHAR(10)
+);
+
+-- Wrong naming convention
+CREATE TABLE NamingConvention (
+	2020_sales CHAR(100)
+);
+
+-- Long name with quote
+CREATE TABLE NamingConvention (
+	"2020_sales" CHAR(100)
+);
+
+-- Name is not case sensitive
+-- This name has been created with different cases
+CREATE TABLE NAMINGCONVENTION (
+	Col1 CHAR(100)
+);
+
+-- Wrong composite PRIMARY KEY definition
+CREATE TABLE Registration (
+    Student_ID int PRIMARY KEY,
+    Course_ID INT PRIMARY KEY,
+);
+
+-- Proper composite PRIMARY KEY definition
+CREATE TABLE Registration (
+    Student_ID int,
+    Course_ID INT,
+    PRIMARY KEY (Student_ID, Course_ID)
+);
+
+DROP TABLE NamingConvention;
+DROP TABLE Registration;
+DROP TABLE Instructor;
+-- Refresh pgAdmin to confirm deletion
+
+

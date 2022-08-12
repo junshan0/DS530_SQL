@@ -1,0 +1,142 @@
+CREATE TABLE Instructor (
+    Instructor_Name varchar(20) PRIMARY KEY,
+    Instructor_Affiliation char(10)
+);
+
+INSERT INTO Instructor VALUES ('Obi-wan Kenobi', 'Jedi');
+INSERT INTO Instructor VALUES ('Anakin Skywalker', 'Jedi');
+INSERT INTO Instructor VALUES ('Yoda', 'Jedi');
+INSERT INTO Instructor VALUES ('Darth Sidious', 'Sith');
+
+-- Simple function definition
+
+CREATE OR REPLACE FUNCTION Get_Current_Date ()
+RETURNS DATE
+AS
+	$$
+		BEGIN
+			RETURN CURRENT_DATE;
+		END;
+	$$
+LANGUAGE PLPGSQL;
+
+SELECT Get_Current_Date();
+
+DROP FUNCTION Get_Current_Date;
+
+-- Function with parameter and variable
+
+CREATE OR REPLACE FUNCTION Get_Affiliation (iName VARCHAR)
+RETURNS VARCHAR
+AS
+	$My_Code_Block$
+		DECLARE iAffl VARCHAR;
+		BEGIN
+			SELECT Instructor_Affiliation
+			INTO iAffl
+			FROM Instructor
+			WHERE Instructor_Name = iName;
+	
+			RETURN 
+				CASE 
+					WHEN iAffl = 'Jedi' THEN 'Light side of the force'
+					ELSE 'Dark side of the force'
+				END;
+		END;
+	$My_Code_Block$
+LANGUAGE PLPGSQL;
+
+SELECT Instructor_Name, Get_Affiliation(Instructor_Name)
+FROM Instructor;
+
+DROP FUNCTION Get_Affiliation;
+
+
+-- Stored procedure
+
+CREATE OR REPLACE Procedure Get_Affiliation (iName VARCHAR)
+AS
+	$My_Code_Block$
+		DECLARE iAffl VARCHAR;
+		BEGIN
+			SELECT 
+				CASE 
+					WHEN Instructor_Affiliation = 'Jedi' THEN 'Light side of the force'
+					ELSE 'Dark side of the force'
+				END
+			INTO iAffl
+			FROM Instructor
+			WHERE Instructor_Name = iName;
+	
+			RAISE NOTICE 'The instructor is from %', iAffl;
+		END;
+	$My_Code_Block$
+LANGUAGE PLPGSQL;
+
+call Get_Affiliation('Yoda');
+
+DROP PROCEDURE Get_Affiliation;
+
+
+-- Trigger
+
+
+CREATE OR REPLACE FUNCTION Update_Instructor_Behavior()
+RETURNS TRIGGER
+AS
+	$My_Code_Block$
+		DECLARE iAffl VARCHAR;
+		BEGIN
+			SELECT 
+				CASE 
+					WHEN New.Instructor_Affiliation = 'Jedi' THEN 'Light side of the force'
+					ELSE 'Dark side of the force'
+				END
+			INTO iAffl;
+	
+			RAISE NOTICE 'The instructor is from %', iAffl;
+			
+			RETURN New;
+		END;
+	$My_Code_Block$
+LANGUAGE PLPGSQL;
+
+CREATE TRIGGER Update_Instructor_Trigger
+   AFTER UPDATE
+   ON Instructor
+   FOR EACH ROW
+   EXECUTE PROCEDURE Update_Instructor_Behavior();
+   
+UPDATE Instructor 
+SET Instructor_Name = 'Ben Kenobi'
+WHERE Instructor_Name = 'Obi-wan Kenobi';
+
+select * from instructor;
+
+-- CURSOR
+
+
+CREATE OR REPLACE FUNCTION Cursor_Example()
+RETURNS INTEGER
+AS
+$$
+DECLARE
+    cursor2 CURSOR (iAffi VARCHAR) FOR 
+		SELECT Instructor_Name
+		FROM Instructor
+		WHERE Instructor_Affiliation = iAffi;
+BEGIN
+	
+	FOR recordvar IN cursor2('Jedi') LOOP
+		RAISE NOTICE 'The Jedi instructor: %', recordvar;
+	END LOOP;
+
+	RETURN 1;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT Cursor_Example();
+
+-- DROP TABLE Instructor;
+

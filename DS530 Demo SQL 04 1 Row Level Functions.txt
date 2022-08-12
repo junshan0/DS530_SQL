@@ -1,0 +1,70 @@
+CREATE TABLE Student (
+    Student_ID int PRIMARY KEY,
+    Student_Name varchar(100) NOT NULL,
+    Student_DOB Date,
+    Address varchar(100),
+    City varchar(100),
+    State char(2),
+    Zip char(5)
+);
+
+INSERT INTO Student VALUES (101, 'Luke Skywalker', '2000-01-01', 'Lars Moisture Farm', 'Tatooine', 'NY', '10001');
+
+-- ::
+SELECT Zip::INTEGER FROM Student;
+SELECT Zip::DECIMAL(9,2) FROM Student;
+SELECT TO_NUMBER('$1,234.00', 'L999g999.99') FROM Student;
+
+-- String concatenation (both CHAR and VARCHAR)
+SELECT Student_Name || ':' || City FROM Student;
+SELECT Student_Name || ':' || City AS Student_City FROM Student;
+
+-- Length/upper/Lower (both CHAR and VARCHAR)
+SELECT LENGTH(Student_Name) FROM Student;
+SELECT UPPER(Student_Name) FROM Student;
+SELECT LOWER(Student_Name) FROM Student;
+
+SELECT POSITION('S' in Student_Name) FROM Student;
+SELECT POSITION('s' in Student_Name) FROM Student;
+
+SELECT REPLACE(Student_Name, 'Skywalker', 'Starkiller') FROM Student;
+-- Trivia: In the earlier drafts of the original Star Wars movie, the protagonist's name was Luke Starkiller.
+
+SELECT SUBSTRING(Student_Name, 1, 4) FROM Student;
+SELECT LEFT(Student_Name, 6) FROM Student;
+
+-- TO_CHAR
+SELECT TO_CHAR(1234.56, '000000.00') FROM Student;
+
+SELECT TO_CHAR(Student_DOB, 'YYYY-MM-DD') FROM Student;
+SELECT TO_CHAR(Student_DOB, 'MON DD, YYYY') FROM Student;
+
+-- TO_DATE
+SELECT TO_DATE('Feb 24, 2000', 'MON DD, YYYY') FROM Student;
+-- This will fail because format string does not match the value
+SELECT TO_DATE('Feb 24, 2000', 'MM DD, YYYY') FROM Student;
+
+SELECT CURRENT_DATE - Student_DOB FROM Student;
+SELECT Student_DOB + 365 FROM Student;
+SELECT AGE(Student_DOB) FROM Student;
+
+SELECT DATE_PART('Y', Student_DOB) FROM Student;
+SELECT DATE_PART('Month', Student_DOB) FROM Student;
+
+-- CASE
+SELECT 
+	CASE 
+		WHEN Student_DOB >= '2001-01-01' THEN '21st Century'
+		ELSE '20th Century'
+	END
+FROM Student;
+
+-- It is a good practice to always add an ELSE branch
+-- Otherwise you will get a NULL
+SELECT 
+	CASE 
+		WHEN Student_DOB >= '2001-01-01' THEN '21st Century'
+	END
+FROM Student;
+
+DROP TABLE Student;

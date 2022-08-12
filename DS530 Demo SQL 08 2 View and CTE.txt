@@ -1,0 +1,64 @@
+
+------------------------------------------------
+-- View
+------------------------------------------------
+
+CREATE VIEW Jedi_Instructor AS
+SELECT * FROM Instructor
+WHERE Instructor_Affiliation = 'Jedi';
+
+SELECT *
+FROM Jedi_Instructor;
+
+
+------------------------------------------------
+-- MATERIALIZED VIEW
+------------------------------------------------
+
+CREATE MATERIALIZED VIEW Jedi_Instructor_M AS
+SELECT * FROM Instructor
+WHERE Instructor_Affiliation = 'Jedi';
+
+DELETE FROM Instructor;
+
+SELECT * FROM Jedi_Instructor;
+SELECT * FROM Jedi_Instructor_M;
+
+REFRESH MATERIALIZED VIEW Jedi_Instructor_M;
+SELECT * FROM Jedi_Instructor_M;
+
+DROP VIEW Jedi_Instructor;
+DROP MATERIALIZED VIEW Jedi_Instructor_M;
+
+INSERT INTO Instructor VALUES ('Obi-wan Kenobi', 'Jedi');
+INSERT INTO Instructor VALUES ('Anakin Skywalker', 'Jedi');
+INSERT INTO Instructor VALUES ('Yoda', 'Jedi');
+INSERT INTO Instructor VALUES ('Darth Sidious', 'Sith');
+
+WITH 
+    cte_jedi as (
+        SELECT * FROM Instructor
+        WHERE Instructor_Affiliation = 'Jedi'
+    ),
+    cte_jedi2 as (
+        SELECT * FROM cte_jedi
+        WHERE Instructor_Name LIKE 'Y%'
+    )
+SELECT * 
+FROM cte_jedi2;
+
+WITH 
+    cte_jedi as (
+        SELECT * FROM Instructor
+        WHERE Instructor_Affiliation = 'Jedi'
+    ),
+    cte_sith as (
+        SELECT * FROM Instructor
+        WHERE Instructor_Affiliation = 'Sith'
+    )
+SELECT * 
+FROM cte_sith;
+
+DROP TABLE Instructor;
+
+
